@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel FAQ | Cognitive Knowledge Core</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+        
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        body { 
+            background-color: #fafafa; 
+            color: #0f172a; 
+            font-family: 'Outfit', sans-serif; 
+            min-height: 100vh;
+            overflow-x: hidden; 
+            margin: 0; padding: 0; 
+        }
+        
+        /* Ultra-Realistic Aurora + Noise Background */
+        .ambient-bg {
+            position: fixed; inset: 0; z-index: 0;
+            background: radial-gradient(circle at 15% 50%, rgba(245, 243, 255, 1), transparent 50%),
+                        radial-gradient(circle at 85% 30%, rgba(240, 249, 255, 1), transparent 50%),
+                        radial-gradient(circle at 50% 80%, rgba(238, 242, 255, 1), transparent 50%);
+            background-color: #fafafa;
+        }
+        
+        .noise-overlay {
+            position: fixed; inset: 0; z-index: 1;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .aurora-orb {
+            position: absolute; border-radius: 50%; filter: blur(80px);
+            animation: float 20s infinite ease-in-out alternate;
+            mix-blend-mode: multiply; opacity: 0.6;
+        }
+        .orb-1 { width: 60vw; height: 60vw; background: rgba(167, 139, 250, 0.15); top: -20%; left: -10%; animation-duration: 25s; }
+        .orb-2 { width: 50vw; height: 50vw; background: rgba(56, 189, 248, 0.12); bottom: -10%; right: -10%; animation-duration: 30s; animation-delay: -5s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(3%, 5%) scale(1.05); }
+        }
+        
+        /* Premium VisionOS Glassmorphism */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 
+                var(--glass-shadow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .glass-panel:hover {
+            box-shadow: 
+                0 20px 40px 0 rgba(31, 38, 135, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+        }
+
+        .text-gradient {
+            background-clip: text; -webkit-background-clip: text; color: transparent;
+            background-image: linear-gradient(135deg, #0f172a 0%, #475569 100%);
+        }
+
+        /* Chat Bubbles */
+        .chat-bubble-bot {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 1);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), inset 0 2px 4px rgba(255,255,255,0.5);
+            border-radius: 28px 28px 28px 4px;
+            color: #0f172a;
+            position: relative;
+            transform-origin: bottom left;
+            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .chat-bubble-user {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff; 
+            font-weight: 500;
+            border-radius: 28px 28px 4px 28px;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.25), inset 0 2px 4px rgba(255,255,255,0.1);
+            position: relative;
+            transform-origin: bottom right;
+            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .btn-pill {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02), 0 1px 0 rgba(0,0,0,0.02);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .btn-pill:hover {
+            background: #0f172a; color: white;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1);
+            border-color: #0f172a;
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+            color: white;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .btn-send:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.4);
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, #a78bfa 0%, #e879f9 50%, #a78bfa 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite linear;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 md:p-8 relative">
+    <div class="ambient-bg"></div>
+    <div class="noise-overlay"></div>
+    <div class="aurora-orb orb-1"></div>
+    <div class="aurora-orb orb-2"></div>
+
+    <div class="z-10 w-full max-w-[1400px] grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6 md:gap-8 h-[90vh] min-h-[700px]">
+        <!-- Chat Area -->
+        <div class="glass-panel rounded-[32px] md:rounded-[48px] p-6 md:p-10 flex flex-col relative overflow-hidden">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8 pb-6 border-b border-slate-200/50">
+                <div class="flex items-center gap-5">
+                    <div class="w-16 h-16 rounded-[20px] bg-white border border-slate-100 flex items-center justify-center shadow-sm">
+                        <svg class="w-8 h-8 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-gradient mb-1">Sentinel FAQ</h1>
+                        <p class="text-[11px] text-slate-400 font-bold tracking-[0.25em] uppercase">TF-IDF Cognitive Agent</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 bg-emerald-50/80 backdrop-blur-md px-4 py-2 rounded-full border border-emerald-200/50 text-xs text-emerald-700 font-extrabold shadow-sm">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse"></span> ONLINE
+                </div>
+            </div>
+
+            <!-- Messages Stream -->
+            <div id="chatStream" class="flex-grow overflow-y-auto space-y-8 pr-4 mb-8">
+                <!-- Initial Bot Message -->
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-[0_4px_10px_rgba(15,23,42,0.3)]">AI</div>
+                    <div class="space-y-4">
+                        <div class="chat-bubble-bot p-6 max-w-[85%] text-[15px] leading-relaxed">
+                            Hello! I am Sentinel's Cognitive FAQ Assistant. Ask me anything about our AI platform, security compliance, pricing, or API integration!
+                        </div>
+                        <div class="flex flex-wrap gap-2.5">
+                            <button onclick="askPreset('What are the subscription plans?')" class="btn-pill px-4 py-2 rounded-full text-xs text-slate-700 font-bold flex items-center gap-2"><span class="text-lg">💰</span> Pricing & Plans</button>
+                            <button onclick="askPreset('Is my data secure and GDPR compliant?')" class="btn-pill px-4 py-2 rounded-full text-xs text-slate-700 font-bold flex items-center gap-2"><span class="text-lg">🛡️</span> GDPR & Security</button>
+                            <button onclick="askPreset('How do I integrate the API into Python?')" class="btn-pill px-4 py-2 rounded-full text-xs text-slate-700 font-bold flex items-center gap-2"><span class="text-lg">⚡</span> API Integration</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Bar -->
+            <div class="relative flex items-center gap-3 bg-white/50 p-2 rounded-[28px] border border-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] backdrop-blur-md">
+                <button onclick="startVoiceInput()" title="Voice Input" class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition shadow-sm shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                </button>
+                
+                <input type="text" id="userInput" placeholder="Ask a question..." onkeypress="handleKeyPress(event)" class="w-full bg-transparent border-none px-2 py-4 text-slate-800 font-medium text-[15px] focus:outline-none placeholder-slate-400">
+                
+                <button onclick="sendMessage()" class="btn-send px-8 py-4 rounded-[20px] font-bold text-xs tracking-wider uppercase flex items-center gap-2 shrink-0">
+                    <span>Send</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sidebar Knowledge Base -->
+        <div class="glass-panel rounded-[32px] md:rounded-[48px] p-8 flex flex-col overflow-hidden">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-slate-800 font-extrabold text-sm tracking-[0.2em] uppercase">Knowledge Base</h2>
+                <div class="w-8 h-8 rounded-full bg-white border border-slate-100 flex items-center justify-center shadow-sm">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                </div>
+            </div>
+
+            <div id="faqList" class="flex-grow overflow-y-auto space-y-4 pr-2 pb-4 -mr-2">
+                <div class="text-sm text-slate-400 font-medium italic text-center mt-10 shimmer">Loading vector index...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatStream = document.getElementById('chatStream');
+        const userInput = document.getElementById('userInput');
+        const faqList = document.getElementById('faqList');
+
+        async function loadFAQs() {
+            try {
+                const res = await fetch('/api/faqs');
+                const data = await res.json();
+                faqList.innerHTML = '';
+                data.faqs.forEach(faq => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white/60 p-5 rounded-[20px] border border-white hover:border-slate-200 transition-all cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_16px_rgba(0,0,0,0.04)] hover:-translate-y-1 group';
+                    card.onclick = () => askPreset(faq.question);
+                    card.innerHTML = `
+                        <div class="text-[10px] font-mono text-violet-500 bg-violet-50 inline-block px-2 py-0.5 rounded-md font-bold uppercase mb-2 group-hover:bg-violet-500 group-hover:text-white transition-colors">${faq.category}</div>
+                        <div class="text-sm font-semibold text-slate-800 leading-snug">${faq.question}</div>
+                    `;
+                    faqList.appendChild(card);
+                });
+            } catch(e) {}
+        }
+
+        function askPreset(q) {
+            userInput.value = q;
+            sendMessage();
+        }
+
+        function handleKeyPress(e) {
+            if(e.key === 'Enter') sendMessage();
+        }
+
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if(!text) return;
+
+            // User Message
+            const userContainer = document.createElement('div');
+            userContainer.className = 'flex justify-end';
+            userContainer.innerHTML = `
+                <div class="chat-bubble-user p-5 px-6 max-w-[85%] text-[15px] leading-relaxed">${text}</div>
+            `;
+            chatStream.appendChild(userContainer);
+            userInput.value = '';
+            
+            // Scroll to bottom smoothly
+            chatStream.scrollTo({ top: chatStream.scrollHeight, behavior: 'smooth' });
+
+            // Bot Thinking state
+            const botThinking = document.createElement('div');
+            botThinking.className = 'flex gap-4';
+            botThinking.innerHTML = `
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-[0_4px_10px_rgba(15,23,42,0.3)]">AI</div>
+                <div class="chat-bubble-bot p-5 px-6 max-w-[85%]">
+                    <div class="flex items-center gap-1.5 h-6">
+                        <div class="w-2 h-2 bg-violet-400 rounded-full animate-bounce" style="animation-delay: 0s"></div>
+                        <div class="w-2 h-2 bg-violet-400 rounded-full animate-bounce" style="animation-delay: 0.15s"></div>
+                        <div class="w-2 h-2 bg-violet-400 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+                    </div>
+                </div>
+            `;
+            chatStream.appendChild(botThinking);
+            chatStream.scrollTo({ top: chatStream.scrollHeight, behavior: 'smooth' });
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ question: text })
+                });
+                const data = await res.json();
+                chatStream.removeChild(botThinking);
+
+                const botResponse = document.createElement('div');
+                botResponse.className = 'flex gap-4';
+                
+                let suggestionsHtml = '';
+                if(data.suggestions && data.suggestions.length > 0) {
+                    suggestionsHtml = `<div class="flex flex-wrap gap-2 mt-4">` +
+                        data.suggestions.map(s => `<button onclick="askPreset('${s}')" class="btn-pill px-4 py-2 rounded-full text-xs text-slate-700 font-bold transition-all"><span class="text-violet-500 mr-1">✦</span> ${s}</button>`).join('') +
+                        `</div>`;
+                }
+
+                let confidenceColor = data.confidence >= 50 ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-amber-50 text-amber-600 border-amber-200';
+                const confidenceBadge = `<span class="ml-2 inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2.5 py-1 rounded-md border ${confidenceColor} shadow-sm align-middle mb-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>${data.confidence}% Match</span>`;
+
+                botResponse.innerHTML = `
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-[0_4px_10px_rgba(15,23,42,0.3)]">AI</div>
+                    <div class="space-y-2 max-w-[85%]">
+                        <div class="chat-bubble-bot p-6 text-[15px] leading-relaxed">
+                            <div class="text-slate-800">${data.answer} ${confidenceBadge}</div>
+                        </div>
+                        ${suggestionsHtml}
+                    </div>
+                `;
+                chatStream.appendChild(botResponse);
+                chatStream.scrollTo({ top: chatStream.scrollHeight, behavior: 'smooth' });
+            } catch(e) {
+                chatStream.removeChild(botThinking);
+                // Handle error state if needed
+            }
+        }
+
+        function startVoiceInput() {
+            if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return;
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.onresult = (e) => {
+                userInput.value = e.results[0][0].transcript;
+                sendMessage();
+            };
+            recognition.start();
+        }
+
+        // Initialize
+        loadFAQs();
+    </script>
+</body>
+</html>
