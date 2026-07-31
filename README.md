@@ -29,6 +29,7 @@ Sentinel FAQ Bot provides the deterministic reliability of rule-based systems wi
 | **Data Sovereignty** | **100% On-Premise** | Stored in Cloud | Stored in Cloud | On-Premise |
 | **Cost Per Query**| **$0.00** | $0.002 | $0.007 | $0.00 |
 | **Semantic Matching** | **Yes (TF-IDF)** | Yes | Yes | No |
+| **Latency** | **< 10ms (CPU)** | Network Dependent | Network Dependent | < 1ms |
 
 ---
 
@@ -36,7 +37,7 @@ Sentinel FAQ Bot provides the deterministic reliability of rule-based systems wi
 
 ```mermaid
 graph TD
-    A["Client UI (Web)"] -->|"POST {user_id, question}"| B("FastAPI Semantic Gateway")
+    A["Client UI (Web / API)"] -->|"POST {user_id, question}"| B("FastAPI Semantic Gateway")
     B --> C{"NLTK Pre-Processing"}
     C -->|"Tokenize & Lemmatize"| D["Stop-word Removal"]
     D --> E["TF-IDF Vectorization"]
@@ -44,7 +45,7 @@ graph TD
     F --> G{"Max Score > Threshold (0.1)"}
     G -->|"Match Found"| H["Retrieve KB Answer"]
     G -->|"No Match"| I["Return Default Fallback"]
-    H --> J["JSON Success Payload"]
+    H --> J["JSON Success Payload (latency ms)"]
     I --> J
     J --> A
 ```
@@ -53,27 +54,63 @@ graph TD
 Instead of exact keyword matching, Sentinel leverages Term Frequency-Inverse Document Frequency (TF-IDF) to convert queries into vectors. It down-weights common filler words and prioritizes unique nouns and verbs, effectively understanding the mathematical "shape" of a user's intent.
 
 ### 2. Scalable Knowledge Base
-The bot maps semantic distances (using Cosine Similarity) against a scalable JSON knowledge base. This allows non-technical teams to add FAQs without retraining models or modifying code.
+The bot maps semantic distances (using Cosine Similarity) against a scalable JSON knowledge base (`faqs.json`). This allows non-technical teams to add FAQs without retraining models or modifying code.
 
 ---
 
 ## 📂 Project Structure & Files
 
-- `main.py`: The secure FastAPI gateway hosting the NLP pipeline.
-- `faqs.json`: The external knowledge base defining all question-answer pairs.
-- `index.html`: The VisionOS-inspired conversational UI with glowing chat bubbles.
-- `requirements.txt`: Python dependencies.
-- `run_eval.py`: Automated testing script checking intent matching accuracy and confidence scores.
+```text
+Sentinel-FAQ-Bot/
+├── main.py                 # Core FastAPI Server & NLP Pipeline
+├── faqs.json               # Modular External Knowledge Base
+├── index.html              # VisionOS-inspired Premium Chat UI
+├── requirements.txt        # Python Dependencies
+├── tests/
+│   ├── run_eval.py         # End-to-end inference & intent verification
+│   ├── test_api.py         # Unit tests for API endpoints
+│   └── test_nlp.py         # Unit tests for NLP preprocessing & vectorization
+├── demo_assets/            # Screenshots and architectural diagrams
+├── CONTRIBUTING.md         # Guidelines for OSS contributions
+└── LICENSE                 # MIT License
+```
 
 ---
 
-## ⚙️ Installation & Usage
+## 🔌 API Reference
+
+### `POST /ask`
+Submits a natural language question to the semantic engine.
+
+**Headers:**
+- `Content-Type: application/json`
+
+**Payload:**
+```json
+{
+  "user_id": "usr_789xyz",
+  "question": "How do I reset my password?"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "answer": "Navigate to the settings page and click 'Forgot Password' to receive a reset link.",
+  "confidence": 0.942,
+  "latency_ms": 1.2
+}
+```
+
+---
+
+## ⚙️ Installation & Deployment
 
 ### Prerequisites
 - Python 3.9+
-- NLTK, Scikit-Learn, FastAPI
+- NLTK, Scikit-Learn, FastAPI, Uvicorn
 
-### Quick Start
+### Local Development Start
 ```bash
 # 1. Clone the repository
 git clone https://github.com/lakshanmuruganandam/Sentinel-FAQ-Bot.git
@@ -88,10 +125,16 @@ python main.py
 ```
 *The UI Dashboard will be available at `http://localhost:8002/`.*
 
+### Docker Deployment (Production)
+```bash
+docker build -t sentinel-faq-bot .
+docker run -p 8002:8002 sentinel-faq-bot
+```
+
 ---
 
 ## 🤝 Contributing
-We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+We welcome enterprise integrations and OSS contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## 📜 License
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
